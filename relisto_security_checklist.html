@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReLISTO – Security Management Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Century+Gothic|Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── ReLISTO Brand Palette ─────────────────────────────── */
+  :root {
+    --lime:        #AEC637;   /* Pantone 14-1106 primary   */
+    --sage-light:  #CDDD8E;   /* Pantone 13-0401 primary   */
+    --warm-gray:   #B8BA91;   /* Pantone 19-3903 secondary */
+    --charcoal:    #555552;   /* Pantone 19-0406 secondary */
+    --cream:       #DFE1CF;   /* Pantone 15-1305 secondary */
+    --off-white:   #F7F8F2;   /* very light bg             */
+    --client-blue: #1D3557;
+    --client-bg:   #E8F0F8;
+    --client-bdr:  #A8C5E0;
+    --border:      #D8DAC5;
+    --ink:         #2E2E2C;
+    --muted:       #777770;
+    --done-bg:     #F0F5DC;
+    --done-text:   #6A7A20;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito Sans', 'Helvetica', sans-serif;
+    background: var(--off-white);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  header {
+    background: var(--charcoal);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.25);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 0 36px;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 0;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    padding-right: 24px;
+    margin-right: 24px;
+  }
+
+  .header-logo {
+    height: 38px;
+    filter: brightness(10) saturate(0); /* white logo */
+  }
+
+  .header-title {
+    font-family: 'Century Gothic', 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage-light);
+    line-height: 1.3;
+  }
+
+  .header-title small {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .progress-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+
+  .progress-lbl { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 1px; text-transform: uppercase; }
+  .progress-bar { width: 160px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--lime); border-radius: 3px; transition: width 0.4s; }
+  .progress-count { font-size: 12px; font-weight: 700; color: var(--lime); }
+
+  /* ── Sync status ─────────────────────────────────────────── */
+  .sync-bar {
+    background: var(--lime);
+    color: var(--charcoal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 5px 36px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--charcoal); }
+  .sync-dot.ok { background: #1a5c1a; }
+  .sync-dot.error { background: #8b0000; }
+  .sync-dot.loading { background: var(--charcoal); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Toolbar ─────────────────────────────────────────────── */
+  .toolbar {
+    padding: 12px 36px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border);
+    background: #fff;
+  }
+
+  .btn {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+  .btn.primary { background: var(--lime); color: var(--charcoal); border-color: var(--lime); font-weight: 800; }
+  .btn.primary:hover { background: #8fa528; border-color: #8fa528; }
+  .btn.accent { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+
+  /* ── DB Config Banner ────────────────────────────────────── */
+  .db-banner {
+    background: #fff8dc;
+    border-bottom: 2px solid #f0c040;
+    padding: 14px 36px;
+    font-size: 12px;
+    color: #6b5500;
+  }
+
+  .db-banner-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 860px;
+  }
+
+  .db-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .db-row-actions {
+    margin-top: 4px;
+    border-top: 1px dashed #d4aa00;
+    padding-top: 8px;
+  }
+
+  .db-label {
+    font-weight: 700;
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: #6b5500;
+  }
+
+  .db-hint {
+    color: #a08020;
+    font-size: 11px;
+    padding: 0 4px;
+  }
+
+  .db-banner input {
+    font-family: 'Nunito Sans', monospace;
+    font-size: 12px;
+    border: 1.5px solid #d4aa00;
+    border-radius: 4px;
+    padding: 5px 10px;
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+    color: var(--ink);
+    background: #fffdf0;
+  }
+
+  .db-banner input:focus { outline: none; border-color: #8fa528; }
+
+  /* Connected info bar */
+  .db-connected {
+    background: var(--done-bg);
+    border-bottom: 2px solid var(--lime);
+    padding: 10px 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--done-text);
+    flex-wrap: wrap;
+  }
+
+  .db-connected strong { font-weight: 700; }
+  .db-connected .bin-id-box {
+    font-family: monospace;
+    background: #fff;
+    border: 1px solid var(--lime);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--charcoal);
+    cursor: pointer;
+    user-select: all;
+  }
+  .db-connected .btn-small {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    color: var(--charcoal);
+    font-weight: 700;
+  }
+  .db-connected .btn-small:hover { background: var(--charcoal); color: #fff; }
+
+  /* ── Legend ──────────────────────────────────────────────── */
+  .legend {
+    padding: 8px 36px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--off-white);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── Main content ────────────────────────────────────────── */
+  .main {
+    max-width: 920px;
+    margin: 24px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .section-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .section-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .sec-num {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--charcoal);
+    background: var(--sage-light);
+    padding: 3px 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .sec-title {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+    color: var(--charcoal);
+  }
+
+  .sec-prog { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .sec-tog { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .sec-tog.open { transform: rotate(180deg); }
+  .sec-body { display: none; }
+  .sec-body.open { display: block; }
+
+  /* ── Task Row ────────────────────────────────────────────── */
+  .task-row {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0edea;
+    transition: background 0.15s;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-row:hover { background: #fafaf5; }
+  .task-row.done { background: var(--done-bg); }
+
+  .task-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .task-check {
+    width: 20px; height: 20px;
+    accent-color: var(--lime);
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .task-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    flex: 1;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+  .task-row.done .task-label { text-decoration: line-through; color: var(--done-text); opacity: 0.7; }
+
+  .done-tag {
+    font-size: 10px;
+    background: var(--lime);
+    color: var(--charcoal);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── Dates row ───────────────────────────────────────────── */
+  .date-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-left: 32px;
+  }
+
+  .date-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 6px;
+    padding: 5px 11px;
+    border: 1px solid var(--border);
+    background: var(--off-white);
+  }
+  .date-group.due { border-color: #e8a040; background: #fffaf3; }
+  .date-group.done-date { border-color: var(--lime); background: var(--done-bg); }
+
+  .date-icon { font-size: 13px; }
+  .date-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); white-space: nowrap; }
+  .date-group.due .date-lbl { color: #b06a00; font-weight: 700; }
+  .date-group.done-date .date-lbl { color: var(--done-text); font-weight: 700; }
+
+  .date-input {
+    font-family: 'Nunito Sans', monospace;
+    font-size: 12px;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+    width: 122px;
+    cursor: pointer;
+  }
+
+  /* ── Notes blocks ────────────────────────────────────────── */
+  .notes-area {
+    padding-left: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .notes-block { display: flex; flex-direction: column; gap: 4px; }
+
+  .notes-hdr {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .notes-hdr.field { color: var(--charcoal); }
+  .notes-hdr.client { color: var(--client-blue); }
+
+  .notes-input {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 7px 10px;
+    background: var(--off-white);
+    color: var(--ink);
+    width: 100%;
+    resize: vertical;
+    min-height: 38px;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+  }
+  .notes-input:focus { outline: none; border-color: var(--lime); }
+  .notes-input::placeholder { color: #c0bdb5; }
+  .notes-input[readonly] {
+    background: #f4f5ec;
+    color: #666;
+    cursor: default;
+  }
+
+  .client-input {
+    background: var(--client-bg) !important;
+    border: 1.5px solid var(--client-bdr) !important;
+    color: var(--client-blue) !important;
+    min-height: 52px;
+    font-weight: 600;
+  }
+  .client-input:focus { border-color: var(--client-blue) !important; }
+  .client-input::placeholder { color: #8ba9c5 !important; font-weight: 400; }
+
+  .badge {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .badge.field { background: var(--warm-gray); color: var(--charcoal); }
+  .badge.client { background: var(--client-blue); color: #fff; }
+  .badge.instr { background: var(--lime); color: var(--charcoal); }
+
+  /* ── Modal ───────────────────────────────────────────────── */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30,30,28,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 860px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 36px;
+    position: relative;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.35);
+  }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none;
+    font-size: 22px; cursor: pointer; color: var(--muted);
+  }
+
+  .modal h2 {
+    font-family: 'Century Gothic', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .modal-tabs { display: flex; gap: 8px; margin: 16px 0 22px; flex-wrap: wrap; }
+  .modal-tab {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11px; font-weight: 700;
+    padding: 6px 14px; border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: #fff; color: var(--ink);
+    cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.15s;
+  }
+  .modal-tab.active { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+
+  /* timeline chart */
+  .chart-axis { display: flex; margin-left: 210px; margin-bottom: 6px; }
+  .chart-axis span { flex: 1; font-size: 10px; color: var(--muted); text-align: center; }
+  .tl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .tl-label { font-size: 10px; width: 200px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-bar-wrap { flex: 1; height: 15px; background: #eee; border-radius: 4px; position: relative; min-width: 300px; }
+  .tl-bar { height: 100%; border-radius: 4px; position: absolute; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; }
+  .tl-bar-txt { font-size: 9px; color: #fff; font-weight: 700; white-space: nowrap; }
+  .tl-done-line { position: absolute; top: -3px; height: 21px; width: 3px; background: var(--lime); border-radius: 2px; z-index: 2; }
+
+  .sec-divider { font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin: 12px 0 5px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+
+  /* report */
+  .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 22px; }
+  .report-card { background: var(--off-white); border: 1.5px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .report-card .rc-num { font-family: 'Century Gothic', sans-serif; font-size: 32px; font-weight: 700; color: var(--lime); }
+  .report-card .rc-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .report-table th { background: var(--charcoal); color: #fff; padding: 8px 10px; text-align: left; font-family: 'Century Gothic', sans-serif; font-size: 11px; letter-spacing: 1px; }
+  .report-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+  .report-table tr:hover td { background: var(--off-white); }
+  .status-done { color: var(--done-text); font-weight: 700; }
+  .status-over { color: #c0392b; font-weight: 700; }
+  .status-open { color: var(--muted); }
+
+  .no-data { font-size: 13px; color: var(--muted); text-align: center; padding: 40px; border: 2px dashed var(--border); border-radius: 8px; }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    background: var(--charcoal); color: #fff; padding: 10px 22px;
+    border-radius: 6px; font-size: 13px; font-weight: 600; z-index: 999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+
+  /* ── Stamp Buttons ───────────────── */
+  .stamp-btn {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 11px; border-radius: 4px;
+    border: 1.5px solid var(--lime);
+    background: var(--done-bg); color: var(--done-text);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .stamp-btn:hover { background: var(--lime); color: var(--charcoal); }
+  .stamp-btn.stamp-done { border-color: #ccc; background: #fff; color: var(--muted); }
+  .stamp-btn.stamp-done:hover { background: var(--lime); color: var(--charcoal); border-color: var(--lime); }
+  .date-group.start-date { border-color: #7fb3d3; background: #f0f7fc; }
+  .date-group.start-date .date-lbl { color: #2471a3; font-weight: 700; }
+  .sync-dot.loading { background: var(--lime) !important; animation: pulse 0.8s infinite; }
+
+  /* ── Add Task / Custom Task UI ─── */
+  .add-task-row {
+    padding: 10px 20px;
+    border-top: 1px dashed var(--border);
+    background: var(--off-white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .add-task-btn {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--lime);
+    background: none;
+    border: 1.5px dashed var(--lime);
+    border-radius: 5px;
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+  }
+  .add-task-btn:hover { background: var(--lime); color: var(--charcoal); }
+
+  .add-task-input-wrap { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+
+  .add-task-input {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    border: 1.5px solid var(--lime);
+    border-radius: 5px;
+    padding: 6px 12px;
+    flex: 1;
+    min-width: 180px;
+    color: var(--ink);
+    outline: none;
+    background: #fff;
+  }
+
+  .custom-badge {
+    font-size: 9px;
+    background: var(--sage-light);
+    color: var(--charcoal);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .delete-task-btn {
+    background: none;
+    border: 1.5px solid #e0c0c0;
+    color: #c0392b;
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .delete-task-btn:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  @media(max-width:620px){
+    header { padding: 0; }
+    .header-inner, .toolbar, .legend, .db-banner, .sync-bar { padding-left: 14px; padding-right: 14px; }
+    .main { margin: 12px auto; }
+    .task-row { padding: 12px 14px; }
+    .section-header { padding: 12px 14px; }
+    .date-row, .notes-area { padding-left: 0; }
+    .modal { padding: 18px 14px; }
+    .tl-label { width: 120px; }
+    .chart-axis { margin-left: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img class="header-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAY4AAACCCAYAAABRsS+zAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAgAElEQVR4nNS9d3hc1bX+/znnTJ9RmaJe3CtgG0yvBjdseskNBAgQejcJyQUChJvATSEJPXBD+FJCCzX0AMbY2KbYphj3rl5G0hRNn1P2748ZjdVsS7Zk+L3Po2dmzpRzzqu191p77VWkZcuWHXPnTdc++cDsAwJjiwoSTU3NZTXbt41d1ZzQ/rK60fLmnJNXjM7PT/ADwUNr1464f+13o9/42Zy1x4+vbuv9/uItDe5T//7ewQAFZpMoNJkMmyIJqyRjkyVskoxVloVNloVNlrqeY1NkYZUk0aZq8rpYXFkfiysJ3ZAAnrto1pozp4zuc67uaGltLdm0YcOkD2qj2kcNUcNtNYnHjhudVmTD3KprGJpmWt4YMx5Z22x+d+78L6tcruTwMDR4/HH1t6P/b8P6Ee9ccfJ3R46p7Oj9/n821HrP/X8fTAUoNJuMApNJ2GQJmywLa5bTzPP+OfWrqrw2llA2duP0lUvnrp43eUSfc3VHc3Nz2eZNmya8vSOirfKnVIsiiZunlDLRbVGCspyOxWLOQFykr/p0q/2J405YfUJZeWB4GBo8lrU0uy/4ZNG0P51yWM0Vx0/b0fv9jljSNOLuZ48HcCiK8FpMhk3O8ihJZJ5Lwpo9luM6+zyi69L6WMK0LhaXQ6omA/zqpGk1d807fPvurqszHM7/9ttvD94aVNU/fttkKrXbU3dOrzAO8tql95pDym+/qDM/OKIyLUVStilTp37rdheGhoehwWNVc4vnvMWLpi6YdfD222dPr+39fjM4Zhl3z/PHAjhNivCazUaOM0nCmuU0K6tdXGLNHovourQuFjetjSaUTk2TAO6aO337r2ZNr9nddX22o6Xg3Cffn/bfZSXqRMzywdOnr1RV1fLcqpVTPjRS2ktXzf96ydZGzx1vfj7+kcpKLRlNWg+ZfuhKl8sZGxai9gLvbN1auWDlinF/Pfe4jRceNqG59/sralvzT3rkzUMB5o6ubpPefPPN888866w3l5wxgWk+BwDPbGrnxmX1zHY4eai4BL+us01NkxQCXQh06PGoAUavx+7vS5KEV1bwKQpeU+bRp5hwSRKSJA344tanUpzZVE+Jw8Lysybgtpr6fEYzBBuCSVa1xfiuI0FU1UnqBkldkNQMEtrO50ndIKkJErpBSheoQuAyyUz12pniczDV62CK186EQhsmec/XudIfY87bmznUZmNFMsmXZ09kotsOwBPr27jl8wbmO138taiYZl1nu5om1YvT/rjcJadKF5c7OXUOktNvEwl+1NJIlcvKsjMnkGdR+uV0XTDBKn+MNYEEMTXDXUITpPSenCZ0g1SW06RuoAnIN8tM8TqY6rNnHr12xhUMjNNlzRFOfW8rp7lcvBWN8shx1Vw03gvA8pYo5/5nK9WKmedKy9GALek0UWGgC9AQGL0e+5NfHdABIQSF3bjs4rVAlgfFaUTXOaq+Bl2CJWdMYFJWBrpDCMGOSJoV/hjftMUJpjRS+k5ZTGRlNdWd56wcpw2BVZaY7LYxNSunU312Jrvt2E3yHq+vJa5y1GsbuKGwOZ3mHzNGcGJ5Hse+sRGrJvFWRRUuWUYIQauuszXLaW8ud8epBhjZ+3T3w2n+YDk1DE5trKdJVfnwtHEcWuzql9NtnSlW+uN80x4n1I3TZFZGu3OazMpoF6c2WeIAj50pPnuGU2+GU9tuOF3SFOG8D7dRKpt4rqyCUtPOOenJUJB7Ax0sOWMCp7y7hXGKmZfKKzFLEoYQNGka29Q0iV3Mq3uaXyVJwiPLPXj1mhTypMFx26xpzG+oI4Hgmx9NotJl7fMZ3RBsDCVZ6Y9hlI7cYJIkSWRIz3zgxS0BblpWT6lJoVlTOaR2B4muN4cYVkmiyKTglRW8isIhVhtznC7GWix9Pps2DC5oaRIGSE+fOLJfpQFgkiUO8to5yNt3sO4JuiGQJJAHQXoXYqrOlYtrKDOZ+JErnxXJJEaWtqc3tnPL5w2UKybq1DTTaneQHCZObZKEz6TgkzMDdbrNxhynk1HmvpwmDYOLW5uRgKdPGtmv0oAMp5mB5Bj09eiGQJYYlCB3oTOtc/WSWqrNZq4vdPNWNIqR5W1Fa4xzP9iGBQmbJDGzsY6wbgz6HAOBWQJv1+CUFSZaLMxxuphitfYrKz9pbiRuCB4+trpfpQEZPkbnWxmdb+W8sZ5BXY8hBEKAMgDF2xtCCG5YWkdMNfhzSTE/a2lGMwQ/+2QHbQmNywsK+UNHO5vVNJvTaTqN4ePU151Tq5W5DicHWa19ZEUIwZ3tfupVlV9OK+lXaUCG07EFNsYW2Dh/3OA5hcGN/YUNnVzw0XZGmMz8s7Qcn6nnnBTJcnfVkhoMXXCMy8Gd7W1sTqfYoqaJGcM3r/qUzJzqVRSmWTNzwHizpQ+3uhDc7G8lYhj87fjqfpUGZGTtAI+dAzx2lMkHNJgMw5ABBILXtgW55tPMCtBQwOe1cJy7gEluGxMLbTjNCiYJFEnCJEvIUmZSMUkSipT54a73FAlMUuYzuoD2pIY/odKW0PAnNNqSXc9V/AmN5pjKn4MB/hwMMMZiZo7D1UOQrmhtIazr0t2HlnN4iXNYCN+bgdiFO1Y0sSOS5usyN6e/V6RdCJT0Kpb9jY22A2qzSG9RRuKMpRtOd3qIK4TUdJiRNdGmDRFezBLV9R7f1YRGO6L1hzRiO6TJ2A2Q2MjL0CaRi0T0ZhSPpyI1JC4i0wDXJGRLj5jDCMlJJSwaDmPFASmqCHhiXYkKRDK0r0nCSm5H3YPJjcM2ZKHCYl9Y+kWz7aHAU/AZJZINi8UwJnTGPjWN7R/4PIfDsN7yzh65HV/UD3UoG8XQkuKTMo8AJnT+biywN5Yqhj7kC3SaGPM9g1bEBD+8Sag4gHIPSVpGbEtGYf6V8LGZqwkNi6TYuqMIEDNKDxGRrYj7CK0oJUVLQ4tFl1fGT9qIfnRDYHIe2IqFPJHVL6hnDpAhPYxq8BhAJgWBLXLbBLIDfN0h0d5fQh3VHJSq6UGKqJz0vFNJqFRVvz5DWGf8IgCIg9BIX5tpXARXR2BKSoYCJFTrA2m02d1l35LcaMjNJuv0rJJLqy3q6PQnFYHN9O3ARJm0+WBnhv1Mq4TW0XB3M5BIFvI5Vo7zyOdWfpfmQzBJQ0JIIEFjHOkZTVlTWMSq3rF3gk6bfLPa6r3d8G9V4YABMKFmKlnvRVi6Z14I/tSYT4uDVxv4UAlxOfk07k7BDl8E0EAIHe8kVgFsFXbT0aYCaWAGMO7JFbg+BkSY2FXi85pIhA26NSPbHDHD4IVyGTzX9nBgPFZ/k3AagFdV4yQNWl8p4JbOlf9MSIBB5L9FEbV6Gvr+xHVq3GfaXQNxb3r3r+W8DfXK7BqmFMCBY3aGb2AvvqjNs6LxsGNk2OruS3jZB1yqT7UWlqQ9MLiWE5o5EqTe4LF0jAJevVqhH5LoK9HL9RvX72qhLuHXF+VdDrN9/3vGXR3/sACuLF7GNiHuiQ9RpTUSnA5eLa3RdJT4f3qmgM2MuEHjXTGSFBXCi1RknLYO+fwCwDI6JDGrv0nNn6ILi+vGMn3SFWOlR5e+B6EiNxdaHk6P5LJPzqmJbXOQfZ4NjKa+qlSjS7OovgpxMa8ZRU5bAm3uCZVw4cMJAOqxqQF5g0y75Ii5fF3fmm/W1JqbTc7a7EiVcTpH4JGMnf6JU0JNhFTlRnqLumFqG9EOPP4y6hhJ0JFR8V9DVoNL4eMGDl0j1Yic1tGgRUkz+LBicYEBxCX2g0KmFX66eNNqvDitAJb/3ZYxmRWCoaRMdJMVhFGomAFP0dHO9Nv8DKLT7l0SdKZFgAtE6kiNTEWECuL7nQ+iJj8rF+BKa5e3p2RbDiRQ1ux9jf2eBJgWZ8m2R+4xqHLBWmHdK8gZ1hUi44h+JuMjGGjHgJRcTLGaDIRUhUoKSopSYRiGDXMiRxSj2t1BwXaXh2w9MdMkV5EcTVOBLXl6nCF7VuSqw+yfhXYdMaDjGXZpVS1bPVAJUv+CeVEU0jVF3kbUcC4aNqJxXipBe+bO7OG1RrH1w7vwMq0IDVvEPOFX5b9hkQibfS9vw0L+XNk2L5RxHyTQB0c+NlNQhcNqnfnasrn3qbcHl3NqF3XH+oNpkNi3MuQJaWX5Rd/CJdF0nqOoLI0d/nYsLw/Yx0MV8OJmhMdJibuNXEFpEKMbg5H9UYaqoL2YYk5n26VoX7jf2O5LpuyI/EOXO9GdvkSTx0K3TxBerLuHZ7IjE9hX2s44l1u3T9+d4HqZfFBbDLXNQ5kE6JNKbxJp+DWqsBrQ5pHFJpZ8eSJm4MVr34Ux0JVb8yJTM6BKZW8HqSX/5T7t5+bQl12bRrmmA6u8Tsh8F5rFB2Y2aDi1W2O3/VmO11u9Mh4tINLzFjpCnkc+QgvB+KxWX9k+fC82HVMIMXPi+cWd8KvZR5CsGe7vSdY0IcKjlr9X02sCpjTb3E8V2K4ePCTJQlAMINWRxWm27i8S7IhLePfDm2fDj/jVt3Pt1HVAJmz/LXBcAqT4bBuJjFZJQbqBLVFJEJHasFQd9W6/GBVV/8HO7bvsFk1hhN2ioSwNVFkrAQi0yBhMNE3YT9xk6DafuoAr9YTrJX8mHBUYD+U8QZe4v+K9IFoMqMCa7tB6X2vbJsz7LV4XCuHI4lR0FUhJyR3mh6HuYy9Hm6tJl5V6NhA9YLNZR3gU7p+kv0cPbSaohLjvU1SqYuP1YGY0INLNHgQF0YeWNjKPZJXp7J74KVyBRLPPFnTWJjr0ixJGNbwJi0iiU2Vqk/NyHnGegfFyGaBR8CYqJNiJ3N7XAIB2kAeSVA7BrMY9fHGHv7qRxQVEF7x2INAyiXLEEF3nKz+RsYj5YK+yobCk3RcBbLqfk62kUBLe4yN8OXP7F3Nd5VQZnS10qQY3sXPlkIUPVS//j9axM9j7L4oHNJkQE5A4Fs0M2MRJWmTL1+FMj0g3Bfb3DyvhFXhHVT0bFTnjxTq2gBLe5z8MHlAz7a1biBM3r7WzXwEMgEWKmOj76PdAfJPAJkjF2MloSwkFT2RCeGxSKuVxR+BT4sXvfkTPxegGRZdh7h0w7QUFKEF6Kw9rNUhMV7CzFdz8J7FG5yfbzjgRfW7MRs5WRQFJLbZ5y9JJDB8i2TMbODH4P7M3E0kbPfF9dK3yg3w6HRvVJeUY3bFbHjYfM3VRR+Yx+v/RLG6Yf3eqbfLx5s2XPsmCE0iRSAXh6yHxGCTn4pEUjAkFJ5yAhk8fHR/AxZcqE3IfCaY0b0PJhg8eMqYIfpWzb/BrGbUGtV7GlO9IWHifmcLlPzXE3cMXVRnjjGjQdDPocFrRBWNHuP/QlHNiLiLr3d2m2mWiVi9HXCHBJuDRj0kl+P3JqMqdaB0sEVIBSXUGsT45RZ9Ld6nSv5GKvACAFZ8Jt3OfV5IK7GXPfJIjB5Zu8nCH0x1aSK7KuUVtU5hN9Zd/JflaMeHt5rfBOk7B4IgALNOJAJYilnqQEBg9WwZNF9sRfk8dSFSVRcGlhiZ/lHnDiNoS0LJmZtgBiRKpVMiZJm6W5emhBnCUkLT9Nz4Rlm2v7bLi1XA0IOAH5vIUSHlxs0z0/t7+lgGqJE23TaJeQnQqz9n9WMRV27u9JBh1mJJZwNaLI6u7i8PbnlH2ycvX11FfpwqRHM+Wv+gBoT0eBN/cZq3GcnTjdVIMdLPW2DLUjrMBJSaW51lAtHrGkM3GKAlKfgr1Iv1lL7qNVtX0hVa/hxI1g1b2JGf2xH8/+3BUUv7bXiEJaE4V0FEkZ2r4lkT7kF0nJYX2r4M1Xgk+I9V8UWbCiawO3bqLMXUr2Ob7BMAB05b+8GJPkc28B9xfPV2x3gSh7gVAp2yEhRkUr2Db+yXFaYMx+L4SqyVE4j4t95U/kGYCb8s7SHLXwV5h0u7ZKTJr7l7xnrLjQYoqj93+YMlVqo6VZlq+1q1avJHqiWBXqNpHl0f//4sLIPZqhFioHkCR06k6UDC+3A/mvVy4T0VHHsaGE2XJgRjqrGxb7W7P+h8dOnTAV/FVTiAtiqtW8n+1VfuznXRTIX0D4p5oH5S8B/DpFxuv7FqBU4pMnxpWs0FNQBbfD6LFbAFsZb8pFSmLTxlVNQfGFoBVRX+w4CJGcGE0X0v1oUf3T4bCeP7vMIfeBHxFuHJcgpLQXbUPBMt3bXr0n8dG3T//sFG6+i7cJy7u35MCEuvNwJYRl5MhF7kBvFAbKcN" alt="ReLISTO" onerror="this.style.display='none'">
+      <div class="header-title">
+        Security Management
+        <small>Execution Checklist</small>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="progress-wrap">
+        <div class="progress-lbl">Overall Progress</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-count" id="progressCount">0 / 0 done</div>
+      </div>
+    </div>
+  </div>
+  <div class="sync-bar" id="syncBar">
+    <div class="sync-dot" id="syncDot"></div>
+    <span id="syncMsg">Not connected — enter your JSONBin API key below to enable shared database</span>
+  </div>
+</header>
+
+<!-- DB Banner (hidden - auto-connects) -->
+<div id="dbBanner" style="display:none"></div>
+<input type="hidden" id="apiKeyInput"><input type="hidden" id="propertyInput"><input type="hidden" id="checklistInput"><input type="hidden" id="binIdInput">
+    <div class="db-row">
+      <span class="db-label">🏢 Property</span>
+      <input type="text" id="propertyInput" placeholder="e.g. 325 Berry Street">
+    </div>
+    <div class="db-row">
+      <span class="db-label">📋 Checklist</span>
+      <input type="text" id="checklistInput" placeholder="e.g. Trash Management">
+    </div>
+    <div class="db-row db-row-actions">
+      <button class="btn primary" onclick="connectDB()">Connect &amp; Sync</button>
+      <span class="db-hint">— or —</span>
+      <input type="text" id="binIdInput" placeholder="Already have a Bin ID? Paste it here">
+      <button class="btn accent" onclick="connectWithBinId()">Join Existing</button>
+    </div>
+  </div>
+</div>
+
+<div class="db-connected" id="dbConnected" style="display:none">
+  <span>✓ Connected —</span>
+  <strong id="dbConnectedLabel"></strong>
+  <span style="color:var(--muted)">Bin ID:</span>
+  <span class="bin-id-box" id="binIdDisplay" title="Click to copy" onclick="copyBinId()"></span>
+  <button class="btn-small" onclick="copyBinId()">📋 Copy ID</button>
+  <button class="btn-small" onclick="disconnectDB()">Disconnect</button>
+</div>
+
+<div class="toolbar">
+  <button class="btn primary" onclick="openModal('timeline')">📊 Timeline Chart</button>
+  <button class="btn primary" onclick="openModal('report')">📋 Report</button>
+  <button class="btn" onclick="expandAll()">Expand All</button>
+  <button class="btn" onclick="collapseAll()">Collapse All</button>
+  <button class="btn" onclick="syncNow()">☁ Sync Now</button>
+  <button class="btn accent" onclick="showBinInfo()">🔗 Share URL</button>
+  <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="leg-dot" style="background:#b3d4e8;border:1.5px dashed #2471a3"></div>▶ Tap Start card — stamps today's date</div>
+  <div class="legend-item"><div class="leg-dot" style="background:#f0c080"></div>📅 Due Date — click to set target</div>
+  <div class="legend-item"><div class="leg-dot" style="background:var(--lime);border:1.5px dashed var(--done-text)"></div>✅ Tap Done card — marks complete</div>
+  <div class="legend-item"><div class="leg-dot" style="background:var(--warm-gray)"></div>💾 All changes auto-save</div>
+</div>
+
+<div class="main" id="checklistRoot"></div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modalTitle">Timeline</h2>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('timeline',this)">Timeline</button>
+      <button class="modal-tab" onclick="switchModalTab('report',this)">Report</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ───────────────────────── DATA ───────────────────────── */
+const SECTIONS = [
+  { id:'s0', num:'00', title:'Prior Work Review & Validation (Post Street)', tasks:[
+    { t:'Dawn to review prior project scope document (875 Post St. Door Hardware & Access Control Plan)', instr:'Locate the 875 Post St. scope document. Review in full before any fieldwork begins.' },
+    { t:'Determine usability of document (accuracy, completeness, relevance)', instr:'Assess whether the document reflects current conditions. Flag outdated or incomplete sections.' },
+    { t:'Conduct walkthrough using document as reference', instr:'Bring printed or digital copy on walkthrough. Compare document to actual field conditions.' },
+    { t:'Verify in field: door locations, lock types, condition of hardware, installation feasibility', instr:'Check each item against the prior scope. Note discrepancies with photos.' },
+    { t:'Identify gaps between prior scope and current security requirements', instr:'List every item in the current plan that is missing or incorrect in the prior scope.' },
+    { t:'Extract usable information: door inventory, lock counts, access control points', instr:'Pull verified items from the prior document into the current working plan.' },
+    { t:'Integrate validated items into current security plan', instr:'Update the master security plan with all confirmed field-verified data.' },
+    { t:'Flag decision items: lock standard (TT vs Schlage), Swiftlane compatibility, fire code compliance, installation sequencing', instr:'Create a decision log. Each flagged item needs a responsible party and deadline.' }
+  ]},
+  { id:'s1', num:'01', title:'Initial Security Audit & Baseline', tasks:[
+    { t:'Walk all properties (Broadway, Post)', instr:'Complete walkthrough of both properties. Document start and end times. Bring checklist.' },
+    { t:'Inventory ALL doors (front, rear, side, boiler, bathrooms)', instr:'Number and photograph every door. Record location, type, and current condition.' },
+    { t:'Identify all unsecured / non-compliant doors', instr:'Flag any door that does not meet current security standards. Tag physically if possible.' },
+    { t:'Inventory all exterior entry points requiring cameras', instr:'List every exterior point. Note current camera coverage and gaps.' },
+    { t:'Inspect current Swiftlane installations (mounting + condition)', instr:'Check each Swiftlane unit for physical security, tampering, and proper mounting.' }
+  ]},
+  { id:'s2', num:'02', title:'Door Security & Stress Testing', tasks:[
+    { t:'Test all exterior doors for self-closing + self-latching', instr:'Open each door fully and release. Must close and latch without assistance. Document results.' },
+    { t:'Perform full stress test on each exterior door: push test, pull test, shake test, bypass test', instr:'Apply firm force in all directions. Attempt bypass via credit card shimming. Record pass/fail per door.' },
+    { t:'Verify doors cannot be easily propped open', instr:'Check for prop damage, worn stops, or missing hardware. Note any tenant modifications.' },
+    { t:'Confirm all locks function properly (no slip / misalignment)', instr:'Test lock engagement on every exterior door. Deadbolts must fully extend and retract cleanly.' },
+    { t:'Confirm fire/life safety compliance (free egress)', instr:'All exit doors must open freely from inside without a key. Verify with fire code requirements.' },
+    { t:'Document pass / fail for each door', instr:'Complete door-by-door pass/fail log. Upload to AppFolio with photos.' }
+  ]},
+  { id:'s3', num:'03', title:'Door Repairs & Hardening', tasks:[
+    { t:'Install/adjust door closers where needed', instr:'Order correct closer size per door weight. Adjust spring tension after install.' },
+    { t:'Repair or replace faulty locks', instr:'Replace any lock that failed stress test. Use approved lock standard (confirm TT vs Schlage decision first).' },
+    { t:'Realign strike plates / latches', instr:'Latch must engage cleanly with no resistance. Adjust strike plate position as needed.' },
+    { t:'Reinforce weak door frames', instr:'Install door frame reinforcement kit on any frame showing flex or gap during stress test.' },
+    { t:'Install signage: "DO NOT PROP DOOR OPEN"', instr:'Install at eye level on all exterior doors. Use weatherproof signs for exterior locations.' }
+  ]},
+  { id:'s4', num:'04', title:'Special Access Control Areas', tasks:[
+    { t:'Ensure boiler rooms are locked at all times', instr:'Verify keyed lock is installed and functioning. Only authorized staff should have key access.' },
+    { t:'Ensure utility / storage rooms are secured', instr:'All utility and storage rooms must have functioning keyed locks. Audit key holder list.' },
+    { t:'Verify bathroom doors: lock from inside, emergency access from outside', instr:'Test privacy lock engagement. Verify coin-slot or emergency release works from exterior.' }
+  ]},
+  { id:'s5', num:'05', title:'Swiftlane Hardening', tasks:[
+    { t:'Obtain bids for steel backing plate and metal cage enclosure', instr:'Request minimum 2 bids per item. Specify Swiftlane model dimensions for accurate quotes.' },
+    { t:'Approve vendor and schedule install', instr:'PM approves vendor selection. Schedule within 5 business days of approval.' },
+    { t:'Install reinforced mounting system', instr:'Contractor installs per approved bid scope. PM or RM must be present during install.' },
+    { t:'Verify device cannot be removed or tampered with', instr:'Attempt to manually remove or shift unit after install. Must be fully immovable.' }
+  ]},
+  { id:'s6', num:'06', title:'Swiftlane System Capabilities', tasks:[
+    { t:'Contact Swiftlane support', instr:'Call or chat with Swiftlane support. Have account number and device serial numbers ready.' },
+    { t:'Confirm forced entry alert capability', instr:'Ask support to confirm this feature is active on your account and firmware version.' },
+    { t:'Confirm door sensor compatibility', instr:'Verify which door sensor models are compatible with your Swiftlane units.' },
+    { t:'Enable real-time alerts (mobile + email)', instr:'Configure in Swiftlane admin portal. Test alert delivery to all configured recipients.' },
+    { t:'Configure user notifications (Owner / Don / Staff)', instr:'Set up notification groups in Swiftlane. Confirm each person receives a test alert.' },
+    { t:'Test forced entry scenario + confirm alerts', instr:'Simulate forced entry event. Confirm alert fires within 60 seconds to all recipients.' }
+  ]},
+  { id:'s7', num:'07', title:'Camera Coverage – Exterior Doors', tasks:[
+    { t:'Install camera at every exterior door', instr:'One camera per exterior door minimum. Camera must cover full door frame and approach.' },
+    { t:'Ensure camera captures: approach, door interaction, entry/exit', instr:'Review test footage. All three zones must be visible and identifiable in the frame.' },
+    { t:'Enable motion detection on all cameras', instr:'Configure motion zones in camera system. Set sensitivity appropriate for each location.' },
+    { t:'Verify night visibility (low light / IR)', instr:'Test footage at night or in low-light conditions. IR must activate automatically.' },
+    { t:'Confirm remote access (mobile + desktop)', instr:'Access live and recorded footage from mobile app and desktop browser. Document login steps.' },
+    { t:'Set recording retention (minimum 7–14 days)', instr:'Configure storage settings for minimum 7 days. 14 days preferred. Confirm storage capacity.' }
+  ]},
+  { id:'s8', num:'08', title:'Camera System Usability (Dawn Test)', tasks:[
+    { t:'Test footage retrieval (specific time/event)', instr:'Dawn retrieves footage from a specific date/time without assistance. Must complete in under 5 minutes.' },
+    { t:'Test exporting video clip', instr:'Export a 1-minute clip to USB or email. Verify file is playable on standard device.' },
+    { t:'Test mobile access', instr:'Access live feed and playback from mobile phone. Test on both iOS and Android if applicable.' },
+    { t:'Evaluate ease of use (manager-level) — goal: determine if current system is usable given number of people managing and use case', instr:'Rate system 1–5 for ease of use. Document specific pain points or limitations observed.' },
+    { t:'Decide: keep / upgrade / replace system', instr:'PM makes final decision based on Dawn test results. Document decision with rationale in AppFolio.' }
+  ]},
+  { id:'s9', num:'09', title:'Front Desk Monitoring (Post Street)', tasks:[
+    { t:'Set up front desk workstation', instr:'Desk must have clear sightline to building entrance. Ensure adequate lighting.' },
+    { t:'Install monitor with live camera feeds', instr:'Configure monitor to display all exterior camera feeds. Set up split-screen or rotation view.' },
+    { t:'Provide logbook + visitor tracking sheets', instr:'Place physical logbook at desk. Pre-print visitor tracking sheets for first 2 weeks.' },
+    { t:'Install signage (ID required / check-in required)', instr:'Post signage at building entrance and front desk. Must be visible before entry.' },
+    { t:'Assign Michael to front desk monitoring', instr:'Confirm Michael\'s schedule and duties in writing. Brief him on visitor log procedures.' }
+  ]},
+  { id:'s10', num:'10', title:'Visitor Tracking System', tasks:[
+    { t:'Implement visitor log system', instr:'Deploy physical or digital log at front desk. All visitors must be logged without exception.' },
+    { t:'Require ID during business hours', instr:'Define business hours policy. Staff must request and verify ID before granting access.' },
+    { t:'Track: visitor name, tenant visited, time in/out', instr:'All three fields are required on every log entry. Incomplete entries must be flagged.' },
+    { t:'Run system for 1 week', instr:'Operate without modification for full 7 days. Collect baseline data.' },
+    { t:'Review logs and identify patterns/issues', instr:'PM reviews logs at end of week 1. Identify peak times, recurring visitors, and any gaps.' }
+  ]},
+  { id:'s11', num:'11', title:'Physical Security Upgrades – Bids (Post)', tasks:[
+    { t:'Obtain bids for window bars and side fence (Post)', instr:'Request minimum 2 bids each. Specify dimensions and materials required.' },
+    { t:'Review and approve vendors', instr:'PM reviews bids with owner. Written approval required before any work is authorized.' },
+    { t:'Schedule installation', instr:'Coordinate with vendor and residents for minimum disruption. Notify tenants 48hrs in advance.' }
+  ]},
+  { id:'s12', num:'12', title:'Policy & Enforcement', tasks:[
+    { t:'Implement no propped door policy', instr:'Distribute written policy to all tenants. Include in lease addendum. Define consequences.' },
+    { t:'Implement guest check-in requirement', instr:'All guests must be checked in at front desk or via Swiftlane. No exceptions during business hours.' },
+    { t:'Implement ID verification (business hours)', instr:'Staff must verify ID for all non-residents during defined business hours.' },
+    { t:'Define violation consequences', instr:'Draft violation schedule: warning → written notice → fine. Legal review required before issuing.' }
+  ]},
+  { id:'s13', num:'13', title:'Testing & Validation', tasks:[
+    { t:'Test all doors after repairs', instr:'Re-run full stress test on every repaired door. Must pass all four tests to be cleared.' },
+    { t:'Test camera motion alerts', instr:'Trigger motion on each camera. Confirm alert received within 2 minutes.' },
+    { t:'Test Swiftlane alerts + logging', instr:'Simulate access event. Confirm event is logged and alert fires to all recipients.' },
+    { t:'Perform simulated unauthorized entry test', instr:'Conduct unannounced entry attempt. Document response time and system performance.' }
+  ]},
+  { id:'s14', num:'14', title:'Ongoing Security Management', tasks:[
+    { t:'[WEEKLY] Check all exterior doors', instr:'Every week: walk all exterior doors. Check self-close, self-latch, and lock function.' },
+    { t:'[WEEKLY] Verify cameras are functioning', instr:'Every week: confirm all cameras show live feed and motion detection is active.' },
+    { t:'[WEEKLY] Spot check visitor logs', instr:'Every week: review visitor log for completeness and any unusual patterns.' },
+    { t:'[MONTHLY] Full door stress test', instr:'Every month: repeat full push/pull/shake/bypass test on all exterior doors.' },
+    { t:'[MONTHLY] Review incidents + footage', instr:'Every month: pull incident log and review relevant footage. Document findings in AppFolio.' },
+    { t:'[MONTHLY] Adjust systems and enforcement', instr:'Every month: update policies, camera settings, or access rules based on monthly review.' }
+  ]}
+];
+
+/* ───────────────────────── STATE ───────────────────────── */
+let state = {};
+let customTasks = {};
+let syncTimer = null;
+
+// ── CONFIG — replace YOUR_MASTER_KEY_HERE with your JSONBin Master Key ───────
+const MASTER_KEY        = 'YOUR_MASTER_KEY_HERE';
+const DEFAULT_PROPERTY  = 'ReLISTO';
+const DEFAULT_CHECKLIST = 'Security Management';
+// ─────────────────────────────────────────────────────────────────────────────
+
+let apiKey            = MASTER_KEY;
+let binId             = '';
+let connectedProperty  = DEFAULT_PROPERTY;
+let connectedChecklist = DEFAULT_CHECKLIST;
+
+function storageKey(prop, chk) {
+  return 'relisto_bin__' + encodeURIComponent((prop||'').trim().toLowerCase()) + '__' + encodeURIComponent((chk||'').trim().toLowerCase());
+}
+
+function initState() {
+  SECTIONS.forEach(sec => {
+    sec.tasks.forEach((task, ti) => {
+      const key = `${sec.id}_t${ti}`;
+      if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:task.instr||'' };
+      ['startDate','dueDate','doneDate','fieldNotes'].forEach(f => { if(!(f in state[key])) state[key][f]=''; });
+      if (!('instr' in state[key])) state[key].instr = task.instr||'';
+      if (!('done' in state[key])) state[key].done = false;
+    });
+    // custom tasks for this section
+    if (!customTasks[sec.id]) customTasks[sec.id] = [];
+    customTasks[sec.id].forEach((ct, ci) => {
+      const key = `${sec.id}_custom${ci}`;
+      if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+      ['startDate','dueDate','doneDate','fieldNotes','instr'].forEach(f => { if(!(f in state[key])) state[key][f]=''; });
+      if (!('done' in state[key])) state[key].done = false;
+    });
+  });
+}
+
+/* ───────────────────────── RENDER ─────────────────────── */
+function render() {
+  const root = document.getElementById('checklistRoot');
+  root.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const doneCount = sec.tasks.filter((_,ti) => state[`${sec.id}_t${ti}`]?.done).length;
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'section-header';
+    hdr.innerHTML = `
+      <span class="sec-num">${sec.num}</span>
+      <span class="sec-title">${sec.title}</span>
+      <span class="sec-prog">${doneCount}/${sec.tasks.length}</span>
+      <span class="sec-tog open" id="tog_${sec.id}">▾</span>`;
+    hdr.onclick = () => toggleSec(sec.id);
+    card.appendChild(hdr);
+
+    const body = document.createElement('div');
+    body.className = 'sec-body open';
+    body.id = `body_${sec.id}`;
+
+    sec.tasks.forEach((task, ti) => {
+      const key = `${sec.id}_t${ti}`;
+      const s = state[key];
+      const row = document.createElement('div');
+      row.className = `task-row${s.done?' done':''}`;
+
+      // Build date cards as plain strings so no nested template literal issues
+      const startCard = s.startDate
+        ? `<div class="date-card start-card active"><div class="date-card-icon">▶</div><div class="date-card-label">Started</div><div class="date-card-input-wrap"><input type="date" value="${s.startDate}" onchange="updateField('${key}','startDate',this.value)"></div></div>`
+        : `<div class="date-card start-card tappable" onclick="stampDate('${key}','startDate')"><div class="date-card-icon">▶</div><div class="date-card-label">Start</div><div class="date-card-value" style="color:var(--muted);font-weight:400;font-size:11px">Not started</div><div class="date-card-action">tap to begin</div></div>`;
+
+      const dueCard = `<div class="date-card due-card ${s.dueDate?'active':''}"><div class="date-card-icon">📅</div><div class="date-card-label">Due Date</div><div class="date-card-input-wrap"><input type="date" value="${s.dueDate}" onchange="updateField('${key}','dueDate',this.value)"></div></div>`;
+
+      const doneCard = s.doneDate
+        ? `<div class="date-card done-card active"><div class="date-card-icon">✅</div><div class="date-card-label">Completed</div><div class="date-card-input-wrap"><input type="date" value="${s.doneDate}" onchange="updateField('${key}','doneDate',this.value)"></div></div>`
+        : `<div class="date-card done-card tappable" onclick="stampDate('${key}','doneDate')"><div class="date-card-icon">⬜</div><div class="date-card-label">Done</div><div class="date-card-value" style="color:var(--muted);font-weight:400;font-size:11px">Not done</div><div class="date-card-action">tap to complete</div></div>`;
+
+      row.innerHTML = `
+        <div class="task-top">
+          <input type="checkbox" class="task-check" ${s.done?'checked':''} onchange="toggleTask('${key}',this.checked)">
+          <div class="task-label">${task.t}${s.done?'<span class="done-tag">✓ Done</span>':''}</div>
+        </div>
+        <div class="date-row">${startCard}${dueCard}${doneCard}</div>
+        <div class="notes-area">
+          <div class="notes-block">
+            <div class="notes-hdr"><span class="badge instr">Instructions</span></div>
+            <textarea class="notes-input" placeholder="Enter instructions or details…" onchange="updateField('${key}','instr',this.value)">${s.instr}</textarea>
+          </div>
+          <div class="notes-block">
+            <div class="notes-hdr field"><span class="badge field">Field Agent</span></div>
+            <textarea class="notes-input" placeholder="Field agent: enter observations, completion notes, issues found…" onchange="updateField('${key}','fieldNotes',this.value)">${s.fieldNotes}</textarea>
+          </div>
+`;
+      body.appendChild(row);
+    });
+
+    // ── custom tasks ──
+    if (!customTasks[sec.id]) customTasks[sec.id] = [];
+    customTasks[sec.id].forEach((ct, ci) => {
+      const key = `${sec.id}_custom${ci}`;
+      const s = state[key] || { done:false, dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+      const row = document.createElement('div');
+      row.className = `task-row custom-task${s.done?' done':''}`;
+
+      const cStartCard = s.startDate
+        ? `<div class="date-card start-card active"><div class="date-card-icon">▶</div><div class="date-card-label">Started</div><div class="date-card-input-wrap"><input type="date" value="${s.startDate}" onchange="updateCustomField('${sec.id}',${ci},'startDate',this.value)"></div></div>`
+        : `<div class="date-card start-card tappable" onclick="stampCustomDate('${sec.id}',${ci},'startDate')"><div class="date-card-icon">▶</div><div class="date-card-label">Start</div><div class="date-card-value" style="color:var(--muted);font-weight:400;font-size:11px">Not started</div><div class="date-card-action">tap to begin</div></div>`;
+
+      const cDueCard = `<div class="date-card due-card ${s.dueDate?'active':''}"><div class="date-card-icon">📅</div><div class="date-card-label">Due Date</div><div class="date-card-input-wrap"><input type="date" value="${s.dueDate}" onchange="updateCustomField('${sec.id}',${ci},'dueDate',this.value)"></div></div>`;
+
+      const cDoneCard = s.doneDate
+        ? `<div class="date-card done-card active"><div class="date-card-icon">✅</div><div class="date-card-label">Completed</div><div class="date-card-input-wrap"><input type="date" value="${s.doneDate}" onchange="updateCustomField('${sec.id}',${ci},'doneDate',this.value)"></div></div>`
+        : `<div class="date-card done-card tappable" onclick="stampCustomDate('${sec.id}',${ci},'doneDate')"><div class="date-card-icon">⬜</div><div class="date-card-label">Done</div><div class="date-card-value" style="color:var(--muted);font-weight:400;font-size:11px">Not done</div><div class="date-card-action">tap to complete</div></div>`;
+
+      row.innerHTML = `
+        <div class="task-top">
+          <input type="checkbox" class="task-check" ${s.done?'checked':''} onchange="toggleCustomTask('${sec.id}',${ci},this.checked)">
+          <div class="task-label">${ct.label}${s.done?'<span class="done-tag">✓ Done</span>':''} <span class="custom-badge">Custom</span></div>
+          <button class="delete-task-btn" onclick="deleteCustomTask('${sec.id}',${ci})" title="Delete this task">✕</button>
+        </div>
+        <div class="date-row">${cStartCard}${cDueCard}${cDoneCard}</div>
+        <div class="notes-area">
+          <div class="notes-block">
+            <div class="notes-hdr"><span class="badge instr">Instructions</span></div>
+            <textarea class="notes-input" placeholder="Enter instructions or details…" onchange="updateCustomField('${sec.id}',${ci},'instr',this.value)">${s.instr}</textarea>
+          </div>
+          <div class="notes-block">
+            <div class="notes-hdr field"><span class="badge field">Field Agent</span></div>
+            <textarea class="notes-input" placeholder="Field agent: enter observations, completion notes, issues found…" onchange="updateCustomField('${sec.id}',${ci},'fieldNotes',this.value)">${s.fieldNotes}</textarea>
+          </div>
+        </div>`;
+      body.appendChild(row);
+    });
+
+    // ── Add Task button ──
+    const addRow = document.createElement('div');
+    addRow.className = 'add-task-row';
+    addRow.id = `addrow_${sec.id}`;
+    addRow.innerHTML = `
+      <button class="add-task-btn" onclick="showAddTask('${sec.id}')">+ Add Task</button>
+      <div class="add-task-input-wrap" id="addinput_${sec.id}" style="display:none">
+        <input type="text" class="add-task-input" id="addinput_text_${sec.id}" placeholder="Task name…" onkeydown="if(event.key==='Enter')confirmAddTask('${sec.id}')">
+        <button class="btn primary" onclick="confirmAddTask('${sec.id}')">Add</button>
+        <button class="btn" onclick="cancelAddTask('${sec.id}')">Cancel</button>
+      </div>`;
+    body.appendChild(addRow);
+
+    card.appendChild(body);
+    root.appendChild(card);
+  });
+  updateProgress();
+}
+
+function toggleSec(id) {
+  document.getElementById(`body_${id}`)?.classList.toggle('open');
+  document.getElementById(`tog_${id}`)?.classList.toggle('open');
+}
+function expandAll()  { SECTIONS.forEach(s => { document.getElementById(`body_${s.id}`)?.classList.add('open'); document.getElementById(`tog_${s.id}`)?.classList.add('open'); }); }
+function collapseAll(){ SECTIONS.forEach(s => { document.getElementById(`body_${s.id}`)?.classList.remove('open'); document.getElementById(`tog_${s.id}`)?.classList.remove('open'); }); }
+
+function toggleTask(key, checked) {
+  syncTextareas();
+  state[key].done = checked;
+  render();
+  scheduleSave();
+  showSaving();
+}
+
+function showSaving() {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncMsg');
+  dot.className = 'sync-dot loading';
+  txt.textContent = 'Saving…';
+}
+
+function stampDate(key, field) {
+  const today = new Date().toISOString().split('T')[0];
+  state[key][field] = today;
+  if (field === 'doneDate' && !state[key].done) { state[key].done = true; }
+  if (field === 'startDate' && state[key].done === false) { /* just stamp */ }
+  render();
+  scheduleSave();
+  showSaving();
+}
+
+function stampCustomDate(secId, ci, field) {
+  const key = secId + '_custom' + ci;
+  if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+  const today = new Date().toISOString().split('T')[0];
+  state[key][field] = today;
+  if (field === 'doneDate' && !state[key].done) { state[key].done = true; }
+  render();
+  scheduleSave();
+  showSaving();
+}
+
+function updateField(key, field, val) {
+  state[key][field] = val;
+  updateProgress();
+  scheduleSave();
+  showSaving();
+}
+
+/* ── Custom Task Functions ─────────────────────────────── */
+function showAddTask(secId) {
+  document.getElementById(`addinput_${secId}`).style.display = 'flex';
+  document.querySelector(`#addrow_${secId} .add-task-btn`).style.display = 'none';
+  setTimeout(() => document.getElementById(`addinput_text_${secId}`).focus(), 50);
+}
+
+function cancelAddTask(secId) {
+  document.getElementById(`addinput_${secId}`).style.display = 'none';
+  document.querySelector(`#addrow_${secId} .add-task-btn`).style.display = '';
+  document.getElementById(`addinput_text_${secId}`).value = '';
+}
+
+function confirmAddTask(secId) {
+  const input = document.getElementById(`addinput_text_${secId}`);
+  const label = input.value.trim();
+  if (!label) { input.focus(); return; }
+  if (!customTasks[secId]) customTasks[secId] = [];
+  customTasks[secId].push({ label });
+  const key = `${secId}_custom${customTasks[secId].length - 1}`;
+  state[key] = { done:false, dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+  render();
+  // re-open the section that was being edited
+  document.getElementById(`body_${secId}`)?.classList.add('open');
+  document.getElementById(`tog_${secId}`)?.classList.add('open');
+  scheduleSave();
+}
+
+function toggleCustomTask(secId, ci, checked) {
+  syncTextareas();
+  const key = `${secId}_custom${ci}`;
+  if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+  state[key].done = checked;
+  render();
+  document.getElementById(`body_${secId}`)?.classList.add('open');
+  document.getElementById(`tog_${secId}`)?.classList.add('open');
+  scheduleSave();
+  showSaving();
+}
+
+function updateCustomField(secId, ci, field, val) {
+  const key = `${secId}_custom${ci}`;
+  if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+  state[key][field] = val;
+  updateProgress();
+  scheduleSave();
+}
+
+function deleteCustomTask(secId, ci) {
+  if (!confirm('Delete this task? This cannot be undone.')) return;
+  syncTextareas();
+  // Remove from customTasks array
+  customTasks[secId].splice(ci, 1);
+  // Rebuild state keys for this section's custom tasks
+  const newState = {};
+  customTasks[secId].forEach((ct, newCi) => {
+    const oldKey = `${secId}_custom${newCi >= ci ? newCi + 1 : newCi}`;
+    const newKey = `${secId}_custom${newCi}`;
+    newState[newKey] = state[oldKey] || { done:false, dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+  });
+  // Remove old keys for this section
+  Object.keys(state).forEach(k => { if (k.startsWith(`${secId}_custom`)) delete state[k]; });
+  Object.assign(state, newState);
+  render();
+  document.getElementById(`body_${secId}`)?.classList.add('open');
+  document.getElementById(`tog_${secId}`)?.classList.add('open');
+  scheduleSave();
+}
+
+function updateProgress() {
+  let total=0, done=0;
+  // count built-in tasks
+  SECTIONS.forEach(sec => {
+    sec.tasks.forEach((_,ti) => {
+      const s = state[`${sec.id}_t${ti}`];
+      if (s) { total++; if(s.done) done++; }
+    });
+    // count custom tasks
+    (customTasks[sec.id]||[]).forEach((_,ci) => {
+      const s = state[`${sec.id}_custom${ci}`];
+      if (s) { total++; if(s.done) done++; }
+    });
+  });
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressCount').textContent = `${done} / ${total} done`;
+}
+
+function syncTextareas() {
+  document.querySelectorAll('textarea:not([readonly])').forEach(ta => {
+    const oc = ta.getAttribute('onchange') || '';
+    // built-in: updateField('s1_t0','fieldNotes',...)
+    const m1 = oc.match(/updateField\('([^']+)','([^']+)'/);
+    if (m1 && state[m1[1]]) { state[m1[1]][m1[2]] = ta.value; return; }
+    // custom: updateCustomField('s1',0,'fieldNotes',...)
+    const m2 = oc.match(/updateCustomField\('([^']+)',(\d+),'([^']+)'/);
+    if (m2) {
+      const key = `${m2[1]}_custom${m2[2]}`;
+      if (!state[key]) state[key] = { done:false, startDate:'', dueDate:'', doneDate:'', fieldNotes:'', instr:'' };
+      state[key][m2[3]] = ta.value;
+    }
+  });
+}
+
+/* ───────────────────────── JSONBIN ─────────────────────── */
+function setSyncStatus(status, msg) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncMsg');
+  dot.className = 'sync-dot ' + status;
+  txt.textContent = msg;
+}
+
+async function connectDB() {
+  const key  = document.getElementById('apiKeyInput').value.trim();
+  const prop = document.getElementById('propertyInput').value.trim();
+  const chk  = document.getElementById('checklistInput').value.trim();
+
+  if (!key)  { alert('Please enter your JSONBin Master Key.'); return; }
+  if (!prop) { alert('Please enter a Property name.'); return; }
+  if (!chk)  { alert('Please enter a Checklist name.'); return; }
+
+  apiKey = key;
+  connectedProperty  = prop;
+  connectedChecklist = chk;
+  localStorage.setItem('relisto_apikey', key);
+
+  setSyncStatus('loading', 'Connecting…');
+
+  // Check if we already have a bin for this property+checklist
+  const sKey = storageKey(prop, chk);
+  const savedBinId = localStorage.getItem(sKey);
+
+  if (savedBinId) {
+    binId = savedBinId;
+    await loadFromBin();
+  } else {
+    await createBin();
+  }
+}
+
+async function connectWithBinId() {
+  const key   = document.getElementById('apiKeyInput').value.trim();
+  const bId   = document.getElementById('binIdInput').value.trim();
+  const prop  = document.getElementById('propertyInput').value.trim() || 'My Property';
+  const chk   = document.getElementById('checklistInput').value.trim() || 'My Checklist';
+
+  if (!key) { alert('Please enter your JSONBin Master Key.'); return; }
+  if (!bId) { alert('Please paste a Bin ID.'); return; }
+
+  apiKey = key;
+  binId  = bId;
+  connectedProperty  = prop;
+  connectedChecklist = chk;
+  localStorage.setItem('relisto_apikey', key);
+  localStorage.setItem(storageKey(prop, chk), bId);
+
+  setSyncStatus('loading', 'Joining existing database…');
+  await loadFromBin();
+}
+
+function disconnectDB() {
+  binId = '';
+  connectedProperty = '';
+  connectedChecklist = '';
+  document.getElementById('dbConnected').style.display = 'none';
+  document.getElementById('dbBanner').style.display = 'block';
+  setSyncStatus('', 'Disconnected — enter details above to reconnect');
+}
+
+function copyBinId() {
+  navigator.clipboard.writeText(binId).then(() => showToast('✓ Bin ID copied to clipboard!')).catch(() => {
+    prompt('Copy this Bin ID:', binId);
+  });
+}
+
+async function createBin() {
+  setSyncStatus('loading', 'Creating shared database…');
+  const binName = `${connectedProperty} - ${connectedChecklist}`.substring(0, 128).replace(/[^\x00-\xFF]/g, '');
+  try {
+    const r = await fetch('https://api.jsonbin.io/v3/b', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': apiKey,
+        'X-Bin-Name': binName.replace(/[^\x20-\x7E]/g, '').substring(0, 128),
+        'X-Collection-Name': 'ReLISTO'
+      },
+      body: JSON.stringify({ state, customTasks, property: connectedProperty, checklist: connectedChecklist, version:1 })
+    });
+    const d = await r.json();
+    if (d.metadata?.id) {
+      binId = d.metadata.id;
+      localStorage.setItem(storageKey(connectedProperty, connectedChecklist), binId);
+      showConnectedBar();
+      setSyncStatus('ok', `✓ Saved — ${new Date().toLocaleTimeString()}`);
+      showToast('✓ Database created! Share Bin ID: ' + binId);
+    } else {
+      setSyncStatus('error', 'Connection failed — check your Master Key');
+    }
+  } catch(e) { setSyncStatus('error', 'Network error: ' + e.message); }
+}
+
+async function loadFromBin() {
+  if (!apiKey || !binId) return;
+  setSyncStatus('loading','Syncing…');
+  try {
+    const r = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers:{ 'X-Master-Key': apiKey }
+    });
+    const d = await r.json();
+    if (d.record?.state) {
+      state = d.record.state;
+      if (d.record.customTasks) customTasks = d.record.customTasks;
+      if (d.record.property)  connectedProperty  = d.record.property;
+      if (d.record.checklist) connectedChecklist = d.record.checklist;
+      initState();
+      render();
+      showConnectedBar();
+      setSyncStatus('ok', '✓ Synced — ' + new Date().toLocaleTimeString());
+    } else {
+      setSyncStatus('error', 'No data found in bin — check Bin ID');
+    }
+  } catch(e) { setSyncStatus('error','Sync failed: '+e.message); }
+}
+
+async function saveToBin() {
+  if (!apiKey || !binId) { saveLocal(); return; }
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method:'PUT',
+      headers:{ 'Content-Type':'application/json', 'X-Master-Key': apiKey },
+      body: JSON.stringify({ state, customTasks, property: connectedProperty, checklist: connectedChecklist, version:1, updatedAt: new Date().toISOString() })
+    });
+    setSyncStatus('ok','✓ Saved to cloud — '+new Date().toLocaleTimeString());
+    saveLocal();
+  } catch(e) { setSyncStatus('error','Save failed: '+e.message); saveLocal(); }
+}
+
+function showConnectedBar() {
+  document.getElementById('dbBanner').style.display = 'none';
+  const bar = document.getElementById('dbConnected');
+  bar.style.display = 'flex';
+  document.getElementById('dbConnectedLabel').textContent =
+    `${connectedProperty || '—'}  /  ${connectedChecklist || '—'}`;
+  document.getElementById('binIdDisplay').textContent = binId;
+}
+
+function saveLocal() {
+  try { localStorage.setItem('relisto_state_v2', JSON.stringify({state, customTasks})); } catch(e){}
+}
+
+function scheduleSave() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => { syncTextareas(); saveToBin(); }, 1500);
+}
+
+async function syncNow() {
+  syncTextareas();
+  if (apiKey && binId) {
+    await loadFromBin();
+  } else {
+    saveToBin();
+    showToast('Saved locally. Connect JSONBin to sync with others.');
+  }
+}
+
+/* ───────────────────────── MODAL ───────────────────────── */
+let currentModalTab = 'timeline';
+
+function openModal(tab) {
+  currentModalTab = tab;
+  document.getElementById('modalBg').classList.add('open');
+  renderModalContent();
+  // update tab buttons
+  document.querySelectorAll('.modal-tab').forEach((btn,i) => btn.classList.toggle('active', ['timeline','report'][i]===tab));
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+
+function switchModalTab(tab, btn) {
+  currentModalTab = tab;
+  document.querySelectorAll('.modal-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderModalContent();
+}
+
+function renderModalContent() {
+  const c = document.getElementById('modalContent');
+  if (currentModalTab === 'timeline') renderTimeline(c);
+  else renderReport(c);
+}
+
+/* ──── Timeline ──── */
+function renderTimeline(wrap) {
+  const items = [];
+  SECTIONS.forEach(sec => {
+    sec.tasks.forEach((task, ti) => {
+      const key = `${sec.id}_t${ti}`;
+      const s = state[key];
+      if (s.dueDate || s.doneDate) {
+        items.push({ label:task.t, dueDate:s.dueDate, doneDate:s.doneDate, done:s.done, section:sec.title, color:'var(--lime)' });
+      }
+    });
+  });
+
+  if (!items.length) { wrap.innerHTML=`<div class="no-data">No dates set yet. Add due or done dates to see the timeline.</div>`; return; }
+
+  items.sort((a,b)=>(a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+  const allTs = []; items.forEach(i=>{ if(i.dueDate) allTs.push(new Date(i.dueDate).getTime()); if(i.doneDate) allTs.push(new Date(i.doneDate).getTime()); });
+  const minD=Math.min(...allTs), maxD=Math.max(...allTs), range=maxD-minD||86400000;
+  const fmt = d => { if(!d) return ''; const dt=new Date(d); return `${dt.getMonth()+1}/${dt.getDate()}`; };
+  const pct = t => Math.max(0,Math.min(97,((t-minD)/range)*100));
+
+  let html=`<div style="min-width:560px;overflow-x:auto"><div class="chart-axis">`;
+  for(let i=0;i<=5;i++) html+=`<span>${fmt(new Date(minD+(range*i/5)))}</span>`;
+  html+=`</div>`;
+
+  let lastSec='';
+  items.forEach(item=>{
+    if(item.section!==lastSec){ html+=`<div class="sec-divider">${item.section}</div>`; lastSec=item.section; }
+    const dueT = item.dueDate?new Date(item.dueDate).getTime():null;
+    const doneT= item.doneDate?new Date(item.doneDate).getTime():null;
+    const left = dueT?pct(dueT):0;
+    const donePct = doneT?pct(doneT):null;
+    const barColor = item.done?'var(--lime)':'var(--warm-gray)';
+
+    html+=`<div class="tl-row">
+      <div class="tl-label" title="${item.label}">${item.done?'✓ ':''}${item.label}</div>
+      <div class="tl-bar-wrap">
+        ${dueT?`<div class="tl-bar" style="background:${barColor};opacity:0.8;left:${left}%;width:${Math.max(8,100-left)}%"><span class="tl-bar-txt">${fmt(item.dueDate)}</span></div>`:''}
+        ${donePct!==null?`<div class="tl-done-line" style="left:${donePct}%" title="Done: ${fmt(item.doneDate)}"></div>`:''}
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  wrap.innerHTML = html;
+}
+
+/* ──── Report ──── */
+function renderReport(wrap) {
+  syncTextareas();
+  let total=0, done=0, overdue=0;
+  const today = new Date().toISOString().split('T')[0];
+  const overdueItems = [];
+
+  SECTIONS.forEach(sec => {
+    sec.tasks.forEach((task, ti) => {
+      const key = `${sec.id}_t${ti}`;
+      const s = state[key];
+      total++;
+      if (s.done) done++;
+      if (!s.done && s.dueDate && s.dueDate < today) {
+        overdue++;
+        overdueItems.push({ section:sec.title, label:task.t, dueDate:s.dueDate });
+      }
+
+    });
+  });
+
+  const pct = total ? Math.round((done/total)*100) : 0;
+
+  let html = `
+    <div class="report-grid">
+      <div class="report-card"><div class="rc-num">${done}/${total}</div><div class="rc-lbl">Tasks Complete</div></div>
+      <div class="report-card"><div class="rc-num">${pct}%</div><div class="rc-lbl">Overall Progress</div></div>
+      <div class="report-card"><div class="rc-num" style="color:${overdue?'#c0392b':'var(--lime)'}">${overdue}</div><div class="rc-lbl">Overdue Tasks</div></div>
+
+    </div>`;
+
+  // Section progress
+  html += `<h3 style="font-family:'Century Gothic',sans-serif;color:var(--charcoal);margin-bottom:10px;font-size:14px">Section Progress</h3>`;
+  html += `<table class="report-table"><tr><th>Section</th><th>Done</th><th>Total</th><th>%</th></tr>`;
+  SECTIONS.forEach(sec => {
+    const d = sec.tasks.filter((_,ti) => state[`${sec.id}_t${ti}`]?.done).length;
+    const t = sec.tasks.length;
+    const p = Math.round((d/t)*100);
+    html += `<tr><td>${sec.title}</td><td>${d}</td><td>${t}</td><td><b style="color:${p===100?'var(--done-text)':'var(--charcoal)'}">${p}%</b></td></tr>`;
+  });
+  html += `</table>`;
+
+  if (overdueItems.length) {
+    html += `<h3 style="font-family:'Century Gothic',sans-serif;color:#c0392b;margin:20px 0 10px;font-size:14px">⚠ Overdue Tasks</h3>`;
+    html += `<table class="report-table"><tr><th>Section</th><th>Task</th><th>Due</th></tr>`;
+    overdueItems.forEach(i => html+=`<tr><td>${i.section}</td><td>${i.label}</td><td class="status-over">${i.dueDate}</td></tr>`);
+    html += `</table>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+/* ───────────────────────── EXPORT ─────────────────────── */
+function exportCSV() {
+  syncTextareas();
+  let csv = 'Section,Task,Done,Start Date,Due Date,Done Date,Instructions,Field Agent\n';
+  SECTIONS.forEach(sec => {
+    sec.tasks.forEach((task, ti) => {
+      const s = state[`${sec.id}_t${ti}`];
+      const esc = v => (v||'').replace(/"/g,'""');
+      csv += `"${sec.title}","${task.t}","${s.done?'Yes':'No'}","${s.startDate||''}","${s.dueDate}","${s.doneDate}","${esc(s.instr)}","${esc(s.fieldNotes)}"\n`;
+    });
+    (customTasks[sec.id]||[]).forEach((ct, ci) => {
+      const s = state[`${sec.id}_custom${ci}`] || {};
+      const esc = v => (v||'').replace(/"/g,'""');
+      csv += `"${sec.title} (Custom)","${ct.label}","${s.done?'Yes':'No'}","${s.startDate||''}","${s.dueDate||''}","${s.doneDate||''}","${esc(s.instr)}","${esc(s.fieldNotes)}"\n`;
+    });
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'relisto_security_checklist.csv';
+  a.click();
+}
+
+/* ───────────────────────── UTILS ───────────────────────── */
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2800);
+}
+
+/* ───────────────────────── INIT ───────────────────────── */
+document.getElementById('modalBg').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+function showBinInfo() {
+  const url = window.location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('✓ URL copied — share it with your team!'));
+  }
+  alert('Share this URL with your team:\n' + url + '\n\nBin ID: ' + (binId || 'Not connected yet'));
+}
+
+/* ── Recent Connections Picker ──────────────────────────────── */
+function buildRecentConnections(storageKeys) {
+  if (!storageKeys.length) return;
+  const banner = document.getElementById('dbBanner');
+  const inner = banner.querySelector('.db-banner-inner');
+
+  const recDiv = document.createElement('div');
+  recDiv.style.cssText = 'border-top:1px dashed #d4aa00;margin-top:6px;padding-top:8px;';
+  recDiv.innerHTML = '<span style="font-weight:700;font-size:11px;color:#6b5500;">⚡ Recent connections — click to reconnect:</span>';
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;';
+
+  storageKeys.forEach(sKey => {
+    const bId = localStorage.getItem(sKey);
+    if (!bId) return;
+    // Decode property + checklist from key
+    const parts = sKey.replace('relisto_bin__','').split('__');
+    const prop = decodeURIComponent(parts[0] || '');
+    const chk  = decodeURIComponent(parts[1] || '');
+    const label = `${prop} / ${chk}`;
+
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.cssText = 'font-size:11px;padding:5px 10px;background:#fffdf0;border-color:#d4aa00;color:#6b5500;';
+    btn.textContent = label;
+    btn.onclick = () => {
+      binId = bId;
+      connectedProperty  = prop;
+      connectedChecklist = chk;
+      setSyncStatus('loading', `Reconnecting to ${label}…`);
+      loadFromBin();
+    };
+
+    // Delete button per entry
+    const del = document.createElement('span');
+    del.textContent = '✕';
+    del.style.cssText = 'margin-left:5px;cursor:pointer;color:#c0392b;font-weight:700;';
+    del.title = 'Remove from recent';
+    del.onclick = (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(sKey);
+      btn.parentElement.removeChild(btn);
+    };
+    btn.appendChild(del);
+    list.appendChild(btn);
+  });
+
+  recDiv.appendChild(list);
+  inner.appendChild(recDiv);
+}
+
+initState();
+// Load local first
+try {
+  const saved = localStorage.getItem('relisto_state_v2');
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    state = parsed.state || parsed;
+    customTasks = parsed.customTasks || {};
+    initState();
+  }
+} catch(e){}
+
+render();
+
+// Auto-connect silently on load
+if (MASTER_KEY && MASTER_KEY !== 'YOUR_MASTER_KEY_HERE') {
+  const sKey = storageKey(DEFAULT_PROPERTY, DEFAULT_CHECKLIST);
+  const savedBinId = localStorage.getItem(sKey);
+  if (savedBinId) {
+    binId = savedBinId;
+    loadFromBin();
+  } else {
+    createBin();
+  }
+} else {
+  setSyncStatus('error', 'No Master Key set — open the file and add your JSONBin Master Key');
+}
+</script>
+</body>
+</html>
